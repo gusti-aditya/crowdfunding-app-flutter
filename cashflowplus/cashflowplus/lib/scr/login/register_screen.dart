@@ -291,7 +291,7 @@ class _RegisterPageState extends State<RegisterPage> {
           content: new Text("Pendaftaran akun berhasil"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
+            new ElevatedButton(
               child: new Text("Kembali ke halaman login"),
               onPressed: () {
                 Navigator.pushReplacement(

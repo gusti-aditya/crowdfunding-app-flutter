@@ -21,25 +21,30 @@ class TransactionGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final bisnisDataProvider = Provider.of<BisnisProvider>(context);
     final bisnisData = bisnisDataProvider.bisnisList;
-    if (bisnisData != null) {
-      return ListView.builder(
-        itemCount: bisnisData.length,
-        itemBuilder: (ctx, index) {
-          Bisnis bs = bisnisData[index];
-          return Transaction(
-              transactionAmout: bs.business_value,
-              transactionInfo: bs.business_name,
-              transactionCategory: bs.business_category,
-              transactionDeadline: bs.due_date,
-              transactionDate: bs.yield_period,
-              img: bs.img_file,
-              yieldPercentage: bs.yield_percentage,
-              bs: bs);
-        },
-      );
-    } else {
-      return NoData();
-    }
+    return ChangeNotifierProvider(
+      create: (ctx) => BisnisProvider()..fetchAndSetBisnis(),
+      child: Consumer<BisnisProvider>(builder: (ctx, bisnis, _) {
+        if (bisnis.bisnisList != null) {
+          return ListView.builder(
+            itemCount: bisnis.bisnisList!.length,
+            itemBuilder: (ctx, index) {
+              Bisnis bs = bisnis.bisnisList![index];
+              return Transaction(
+                  transactionAmout: bs.business_value,
+                  transactionInfo: bs.business_name,
+                  transactionCategory: bs.business_category,
+                  transactionDeadline: bs.due_date,
+                  transactionDate: bs.yield_period,
+                  img: bs.img_file,
+                  yieldPercentage: bs.yield_percentage,
+                  bs: bs);
+            },
+          );
+        } else {
+          return NoData();
+        }
+      }),
+    );
   }
 }
 

@@ -3,6 +3,8 @@ import 'menu_view_detail.dart';
 import '../portofolio/portofolio_view.dart';
 import '../history/history_view.dart';
 import '../widget/bisnis_widget.dart';
+import '../../provider/bisnis_provider.dart';
+import 'package:provider/provider.dart';
 
 enum FilterOptions {
   Favorites,
@@ -24,6 +26,8 @@ class MenuDemoScreen extends StatefulWidget {
 
 class _MenuDemoScreenState extends State<MenuDemoScreen> {
   var _showOnlyFavorites = false;
+  var _isInit = true;
+  var _isLoading = false;
 
   int _pageIndex = 0;
   PageController _pageController = PageController();
@@ -41,9 +45,19 @@ class _MenuDemoScreenState extends State<MenuDemoScreen> {
   }
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<BisnisProvider>(context).fetchAndSetBisnis().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   Widget build(BuildContext context) {
@@ -73,11 +87,15 @@ class _MenuDemoScreenState extends State<MenuDemoScreen> {
             )
           ],
         ),
-        body: PageView(
-          children: [TransactionGrid()],
-          //onPageChanged: onPageChanged,
-          //controller: _pageController,
-        ),
+        body: _isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : PageView(
+                children: [TransactionGrid()],
+                //onPageChanged: onPageChanged,
+                //controller: _pageController,
+              ),
       ),
     );
   }
